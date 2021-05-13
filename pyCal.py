@@ -57,7 +57,7 @@ def daySort(a):
     return a
 
 
-def dayDraw(screen, day, maxWidth, location):
+def dayDraw(screen, day, maxWidth,location):
     screen.print_at(day, 17, 0)
     events = daySort(findDay(day))
     for i in range(24):
@@ -71,7 +71,7 @@ def dayDraw(screen, day, maxWidth, location):
             z = int(replaceable[0])+PMint
             if z == i:
                 allEvent += events[j][2]+" @ "+events[j][1]+" | "
-        allEvent = textwrap.shorten(allEvent, width=maxWidth, placeholder="..")
+        allEvent=textwrap.shorten(allEvent, width=maxWidth, placeholder="..")
         screen.print_at(allEvent, location, i+1, 5)
 
 
@@ -99,19 +99,18 @@ def dateDraw(screen):
         screen.print_at('██ '+timeBlock+'███', 0, i+1, 7)
     screen.print_at('████████████████', 0, i+2, 7)
 
-
-def weekDraw(screen, days):
-    maxWidth = screen.width-16
-    maxWidth = maxWidth//7
-    for i in range(1, 8):
-        x = maxWidth-len(days[i-1])
-        x = x//2
-        y = i-1
-        z = maxWidth*y
-        z += 16
-        x = x+z
-        screen.print_at(days[i-1], x, 0, 7)
-        dayDraw(screen, days[i-1], maxWidth-1, z)
+def weekDraw(screen,days):
+    maxWidth=screen.width-16
+    maxWidth=maxWidth//7
+    for i in range(1,8):
+        x=maxWidth-len(days[i-1])
+        x=x//2
+        y=i-1
+        z=maxWidth*y
+        z+=16
+        x=x+z
+        screen.print_at(days[i-1],x,0,7)
+        dayDraw(screen,days[i-1],maxWidth-1,z)
 
 
 def adder(screen):
@@ -132,8 +131,7 @@ def dayViewExe(screen):
     currentDate = tempDate.strftime("%d/%m/%Y")
     screen.clear()
     dateDraw(screen)
-    dayDraw(screen, currentDate, screen.width-17, 17)
-
+    dayDraw(screen, currentDate,screen.width-17,17)
 
 def weekViewExe(screen):
     #monday = now - timedelta(days = now.weekday())
@@ -142,15 +140,14 @@ def weekViewExe(screen):
     global todayDate
     viewMode = 1
     tempDate = todayDate + datetime.timedelta(days=dayDelta)
-    tempDate = tempDate-datetime.timedelta(days=tempDate.weekday())
+    tempDate=tempDate-datetime.timedelta(days=tempDate.weekday())
     currentDate = []
     for i in range(7):
         currentDate.append(tempDate.strftime("%d/%m/%Y"))
-        tempDate = tempDate+datetime.timedelta(1)
+        tempDate=tempDate+datetime.timedelta(1)
     screen.clear()
     dateDraw(screen)
     weekDraw(screen, currentDate)
-
 
 def menu(screen):
     global viewMode
@@ -176,7 +173,7 @@ def menu(screen):
             screen.print_at("Delete Event", 20, screen.height-5, 1)
             break
         elif ev == ord("v"):
-            # viewMode(screen)
+            #viewMode(screen)
             break
         elif ev == ord("p"):
             screen.clear()
