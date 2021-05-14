@@ -2,6 +2,8 @@ import re
 import datetime
 from asciimatics.screen import Screen
 import textwrap
+import string
+from time import sleep
 # Globals
 viewMode = 0  # 0:day 1:week 2:month
 todayDate = datetime.date.today()
@@ -57,7 +59,7 @@ def daySort(a):
     return a
 
 
-def dayDraw(screen, day, maxWidth,location):
+def dayDraw(screen, day, maxWidth, location):
     screen.print_at(day, 17, 0)
     events = daySort(findDay(day))
     for i in range(24):
@@ -71,7 +73,7 @@ def dayDraw(screen, day, maxWidth,location):
             z = int(replaceable[0])+PMint
             if z == i:
                 allEvent += events[j][2]+" @ "+events[j][1]+" | "
-        allEvent=textwrap.shorten(allEvent, width=maxWidth, placeholder="..")
+        allEvent = textwrap.shorten(allEvent, width=maxWidth, placeholder="..")
         screen.print_at(allEvent, location, i+1, 5)
 
 
@@ -99,27 +101,19 @@ def dateDraw(screen):
         screen.print_at('██ '+timeBlock+'███', 0, i+1, 7)
     screen.print_at('████████████████', 0, i+2, 7)
 
-def weekDraw(screen,days):
-    maxWidth=screen.width-16
-    maxWidth=maxWidth//7
-    for i in range(1,8):
-        x=maxWidth-len(days[i-1])
-        x=x//2
-        y=i-1
-        z=maxWidth*y
-        z+=16
-        x=x+z
-        screen.print_at(days[i-1],x,0,7)
-        dayDraw(screen,days[i-1],maxWidth-1,z)
 
-
-def adder(screen):
-    charecters = ""
-    while len(charecters) < 10:
-        ev = screen.get_key()
-        if ev != None:
-            charecters = charecters+chr(ev)
-    return charecters
+def weekDraw(screen, days):
+    maxWidth = screen.width-16
+    maxWidth = maxWidth//7
+    for i in range(1, 8):
+        x = maxWidth-len(days[i-1])
+        x = x//2
+        y = i-1
+        z = maxWidth*y
+        z += 16
+        x = x+z
+        screen.print_at(days[i-1], x, 0, 7)
+        dayDraw(screen, days[i-1], maxWidth-1, z)
 
 
 def dayViewExe(screen):
@@ -131,7 +125,8 @@ def dayViewExe(screen):
     currentDate = tempDate.strftime("%d/%m/%Y")
     screen.clear()
     dateDraw(screen)
-    dayDraw(screen, currentDate,screen.width-17,17)
+    dayDraw(screen, currentDate, screen.width-17, 17)
+
 
 def weekViewExe(screen):
     #monday = now - timedelta(days = now.weekday())
@@ -140,14 +135,151 @@ def weekViewExe(screen):
     global todayDate
     viewMode = 1
     tempDate = todayDate + datetime.timedelta(days=dayDelta)
-    tempDate=tempDate-datetime.timedelta(days=tempDate.weekday())
+    tempDate = tempDate-datetime.timedelta(days=tempDate.weekday())
     currentDate = []
     for i in range(7):
         currentDate.append(tempDate.strftime("%d/%m/%Y"))
-        tempDate=tempDate+datetime.timedelta(1)
+        tempDate = tempDate+datetime.timedelta(1)
     screen.clear()
     dateDraw(screen)
     weekDraw(screen, currentDate)
+
+
+def crapInput(screen,height):
+    charecters = ""
+    while True:
+        ev = screen.get_key()
+        print(ev)
+        if ev == -301:
+            return charecters
+        elif ev == -300:
+            charecters = charecters[:-1]
+            screen.print_at(charecters+" ", 0, height, 6)
+            screen.refresh()
+        elif ev != None and ev not in [-203, -205, -204, -206, -300, -207, -208, -102, -1]:
+            charecters = charecters+chr(ev)
+            screen.print_at(charecters, 0, height, 6)
+
+            screen.refresh()
+
+
+def viewEvent(screen):
+    global viewMode
+    global dayDelta
+    global todayDate
+    screen.clear()
+    if viewMode == 1:
+        tempDate = todayDate + datetime.timedelta(days=dayDelta)
+        tempDate = tempDate-datetime.timedelta(days=tempDate.weekday())
+        currentDate = []
+        screen.clear()
+        for i in range(7):
+            currentDate.append(tempDate.strftime("%d/%m/%Y"))
+            screen.print_at(str(i)+": "+tempDate.strftime("%d/%m/%Y"), 0, i, 7)
+            tempDate = tempDate+datetime.timedelta(1)
+        screen.refresh()
+        inp = 0
+        while True:
+            ev = screen.get_key()
+            if ev == ord("0"):
+                inp = 0
+                break
+            elif ev == ord("1"):
+                inp = 1
+                break
+            elif ev == ord("2"):
+                inp = 2
+                break
+            elif ev == ord("3"):
+                inp = 3
+                break
+            elif ev == ord("4"):
+                inp = 4
+                break
+            elif ev == ord("5"):
+                inp = 5
+                break
+            elif ev == ord("6"):
+                inp = 6
+                break
+        daytoOut = currentDate[inp]
+    else:
+        tempDate = todayDate + datetime.timedelta(days=dayDelta)
+        daytoOut = tempDate.strftime("%d/%m/%Y")
+    events = daySort(findDay(daytoOut))
+    charecters = string.ascii_letters+string.digits
+    charecters = [char for char in charecters]
+    screen.clear()
+    for i in range(min(len(events), len(charecters))):
+        screen.print_at(charecters[i]+": "+events[i]
+                        [2]+" @ "+events[i][1], 0, i, 5)
+    screen.print_at("Type letter to view.", 0, screen.height-1, 2)
+    screen.refresh()
+    flag = True
+    display = []
+    while flag:
+        ev = screen.get_key()
+        for i in range(min(len(events), len(charecters))):
+            if ev == ord(charecters[i]):
+                display = events[i]
+                flag = False
+                break
+    displayConst=display
+    screen.clear()
+    for i in range(4):
+        screen.print_at(display[i], 0, i, 5)
+        screen.print_at(
+            "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+    screen.refresh()
+    while True:
+        ev = screen.get_key()
+        if ev == ord(";"):
+            for i in range(len(calFile)):
+                if calFile[i]==displayConst:
+                    calFile[i]=display
+                    break
+            screen.clear()
+            return
+        elif ev == ord("d"):
+            display[0] = crapInput(screen,0)
+            screen.clear()
+            for i in range(4):
+                screen.print_at(display[i], 0, i, 5)
+                screen.print_at(
+                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            screen.refresh()
+        elif ev == ord("t"):
+            display[1] = crapInput(screen,1)
+            screen.clear()
+            for i in range(4):
+                screen.print_at(display[i], 0, i, 5)
+                screen.print_at(
+                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            screen.refresh()
+        elif ev == ord("n"):
+            display[2] = crapInput(screen,2)
+            screen.clear()
+            for i in range(4):
+                screen.print_at(display[i], 0, i, 5)
+                screen.print_at(
+                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            screen.refresh()
+        elif ev == ord("i"):
+            display[3] = crapInput(screen,3)
+            screen.clear()
+            for i in range(4):
+                screen.print_at(display[i], 0, i, 5)
+                screen.print_at(
+                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            screen.refresh()
+
+
+def refreshMain(screen):
+    if viewMode == 0:
+        dayViewExe(screen)
+    elif viewMode == 1:
+        weekViewExe(screen)
+
 
 def menu(screen):
     global viewMode
@@ -166,22 +298,30 @@ def menu(screen):
         elif ev == ord("a"):
             screen.clear()
             #"Add Event"
-            screen.print_at(adder(screen), 20, screen.height-5, 1)
             break
         elif ev == ord("d"):
             screen.clear()
             screen.print_at("Delete Event", 20, screen.height-5, 1)
             break
         elif ev == ord("v"):
-            #viewMode(screen)
+            viewEvent(screen)
+            refreshMain(screen)
             break
         elif ev == ord("p"):
-            screen.clear()
-            screen.print_at("Previous", 20, screen.height-5, 1)
+            if viewMode == 0:
+                dayDelta -= 1
+                dayViewExe(screen)
+            elif viewMode == 1:
+                dayDelta -= 7
+                weekViewExe(screen)
             break
         elif ev == ord("n"):
-            screen.clear()
-            screen.print_at("Next", 20, screen.height-5, 1)
+            if viewMode == 0:
+                dayDelta += 1
+                dayViewExe(screen)
+            elif viewMode == 1:
+                dayDelta += 7
+                weekViewExe(screen)
             break
         elif ev == ord("g"):
             screen.clear()
@@ -189,7 +329,6 @@ def menu(screen):
             break
         elif ev == ord("q"):
             quit()
-
         screen.refresh()
 
 
@@ -197,13 +336,14 @@ def main(screen):
     dayViewExe(screen)
     while True:
         dateDraw(screen)
-        ev = screen.get_key()
-        screen.print_at("Change Mode(;)", 0, screen.height-1, 2)
-        # Day(0) | Week (1) | Add Event(a) | Delete Event(d) | View Event(v) | Previous(←) | Next (→) | Set Date(s)
-        if ev == ord(";"):
-            menu(screen)
-        else:
-            screen.refresh()
+        menu(screen)
+    #    ev = screen.get_key()
+    #    screen.print_at("Change Mode(;)", 0, screen.height-1, 2)
+    #    # Day(0) | Week (1) | Add Event(a) | Delete Event(d) | View Event(v) | Previous(←) | Next (→) | Set Date(s)
+    #    if ev == ord(";"):
+    #        menu(screen)
+    #    else:
+    #        screen.refresh()
 
 
 # def main():
@@ -255,5 +395,4 @@ def main(screen):
 #                weekPrint(tempDate)
 #        else:
 #            print("No Such Option")
-
 Screen.wrapper(main)

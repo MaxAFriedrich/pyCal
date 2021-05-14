@@ -1,0 +1,12 @@
+| key       | code |
+| --------- | ---- |
+| left      | -203 |
+| right     | -205 |
+| up        | -204 |
+| down      | -206 |
+| backspace | -300 |
+| pgup      | -207 |
+| pgdwn     | -208 |
+| del       | -102 |
+| tab       | -301 |
+| esc       | -1   |
