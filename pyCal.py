@@ -8,7 +8,7 @@ from time import sleep
 viewMode = 0  # 0:day 1:week 2:month
 todayDate = datetime.date.today()
 dayDelta = 0
-calFile = []
+calFile = ['date', 'time', 'name', 'description']
 # today += datetime.timedelta(days=7)
 # date=today.strftime("%d/%m/%Y")
 
@@ -22,7 +22,20 @@ def openCal(name):
     return calFile
 
 
-calFile = openCal("cal.csv")
+def saveCal(name):
+    global calFile
+    output = ""
+    for event in calFile:
+        print(event)
+        output += ",".join(event[0:3])+"\n"
+    print(output)
+    outputFile = open(name, "w")
+    outputFile.write(output)
+    outputFile.close()
+
+
+calName = "cal.csv"
+calFile = openCal(calName)
 
 # find all events on a day
 
@@ -145,7 +158,7 @@ def weekViewExe(screen):
     weekDraw(screen, currentDate)
 
 
-def crapInput(screen,height):
+def crapInput(screen, height):
     charecters = ""
     while True:
         ev = screen.get_key()
@@ -167,6 +180,7 @@ def viewEvent(screen):
     global viewMode
     global dayDelta
     global todayDate
+    global calFile
     screen.clear()
     if viewMode == 1:
         tempDate = todayDate + datetime.timedelta(days=dayDelta)
@@ -213,18 +227,21 @@ def viewEvent(screen):
     for i in range(min(len(events), len(charecters))):
         screen.print_at(charecters[i]+": "+events[i]
                         [2]+" @ "+events[i][1], 0, i, 5)
-    screen.print_at("Type letter to view.", 0, screen.height-1, 2)
+    screen.print_at("Type letter to view | Back to Main(;)",
+                    0, screen.height-1, 2)
     screen.refresh()
     flag = True
     display = []
     while flag:
         ev = screen.get_key()
+        if ev == ord(";"):
+            main(screen)
         for i in range(min(len(events), len(charecters))):
             if ev == ord(charecters[i]):
                 display = events[i]
                 flag = False
                 break
-    displayConst=display
+    displayConst = display
     screen.clear()
     for i in range(4):
         screen.print_at(display[i], 0, i, 5)
@@ -235,13 +252,13 @@ def viewEvent(screen):
         ev = screen.get_key()
         if ev == ord(";"):
             for i in range(len(calFile)):
-                if calFile[i]==displayConst:
-                    calFile[i]=display
+                if calFile[i] == displayConst:
+                    calFile[i] = display
                     break
             screen.clear()
             return
         elif ev == ord("d"):
-            display[0] = crapInput(screen,0)
+            display[0] = crapInput(screen, 0)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
@@ -249,7 +266,7 @@ def viewEvent(screen):
                     "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
         elif ev == ord("t"):
-            display[1] = crapInput(screen,1)
+            display[1] = crapInput(screen, 1)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
@@ -257,7 +274,7 @@ def viewEvent(screen):
                     "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
         elif ev == ord("n"):
-            display[2] = crapInput(screen,2)
+            display[2] = crapInput(screen, 2)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
@@ -265,7 +282,60 @@ def viewEvent(screen):
                     "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
         elif ev == ord("i"):
-            display[3] = crapInput(screen,3)
+            display[3] = crapInput(screen, 3)
+            screen.clear()
+            for i in range(4):
+                screen.print_at(display[i], 0, i, 5)
+                screen.print_at(
+                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            screen.refresh()
+
+
+def addEvent(screen):
+    global viewMode
+    global dayDelta
+    global todayDate
+    global calFile
+    display = [todayDate.strftime(
+        "%d/%m/%Y"), "00:00 AM", "name", "more information"]
+    screen.clear()
+    for i in range(4):
+        screen.print_at(display[i], 0, i, 5)
+        screen.print_at(
+            "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+    screen.refresh()
+    while True:
+        ev = screen.get_key()
+        if ev == ord(";"):
+            calFile.append(display)
+            screen.clear()
+            return
+        elif ev == ord("d"):
+            display[0] = crapInput(screen, 0)
+            screen.clear()
+            for i in range(4):
+                screen.print_at(display[i], 0, i, 5)
+                screen.print_at(
+                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            screen.refresh()
+        elif ev == ord("t"):
+            display[1] = crapInput(screen, 1)
+            screen.clear()
+            for i in range(4):
+                screen.print_at(display[i], 0, i, 5)
+                screen.print_at(
+                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            screen.refresh()
+        elif ev == ord("n"):
+            display[2] = crapInput(screen, 2)
+            screen.clear()
+            for i in range(4):
+                screen.print_at(display[i], 0, i, 5)
+                screen.print_at(
+                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            screen.refresh()
+        elif ev == ord("i"):
+            display[3] = crapInput(screen, 3)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
@@ -285,9 +355,10 @@ def menu(screen):
     global viewMode
     global dayDelta
     global todayDate
+    global calName
     while True:
         screen.print_at(
-            "Day(0) | Week (1) | Add Event(a) | Delete Event(d) | View Event(v) | Previous(p) | Next (n) | Go To Date(g) | Quit(q)", 0, screen.height-1, 2)
+            "Day(0) | Week (1) | Add Event(a) | Delete Event(d) | View/Edit Event(v) | Previous(p) | Next (n) | Go To Date(g) | Quit(q)", 0, screen.height-1, 2)
         ev = screen.get_key()
         if ev == ord("0"):
             dayViewExe(screen)
@@ -296,8 +367,8 @@ def menu(screen):
             weekViewExe(screen)
             break
         elif ev == ord("a"):
-            screen.clear()
-            #"Add Event"
+            addEvent(screen)
+            refreshMain(screen)
             break
         elif ev == ord("d"):
             screen.clear()
@@ -328,6 +399,7 @@ def menu(screen):
             screen.print_at("Go To Date", 20, screen.height-5, 1)
             break
         elif ev == ord("q"):
+            saveCal(calName)
             quit()
         screen.refresh()
 
