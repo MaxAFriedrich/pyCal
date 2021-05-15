@@ -18,7 +18,11 @@ calFile = ['date', 'time', 'name', 'description']
 def openCal(name):
     calFile = open(name, "r").read().split("\n")
     for i in range(len(calFile)):
-        calFile[i] = calFile[i].split(",")
+        if calFile[i]=="":
+            calFile.pop(i)
+            i-=1
+        else:
+            calFile[i] = calFile[i].split(",")
     return calFile
 
 
@@ -26,9 +30,7 @@ def saveCal(name):
     global calFile
     output = ""
     for event in calFile:
-        print(event)
         output += ",".join(event[0:4])+"\n"
-    print(output)
     outputFile = open(name, "w")
     outputFile.write(output)
     outputFile.close()
