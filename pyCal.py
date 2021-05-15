@@ -27,7 +27,7 @@ def saveCal(name):
     output = ""
     for event in calFile:
         print(event)
-        output += ",".join(event[0:3])+"\n"
+        output += ",".join(event[0:4])+"\n"
     print(output)
     outputFile = open(name, "w")
     outputFile.write(output)
@@ -342,6 +342,8 @@ def addEvent(screen):
                 screen.print_at(
                     "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
+
+#def delEvent(screen):
 
 
 def refreshMain(screen):
