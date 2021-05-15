@@ -1,21 +1,26 @@
+# python 3.9
 import re
 import datetime
 from asciimatics.screen import Screen
 import textwrap
 import string
-from time import sleep
+
 # Globals
-viewMode = 0  # 0:day 1:week 2:month
+viewMode = 0  # 0:day 1:week
 todayDate = datetime.date.today()
 dayDelta = 0
 calFile = ['date', 'time', 'name', 'description']
-# today += datetime.timedelta(days=7)
-# date=today.strftime("%d/%m/%Y")
-
-# open calendar
 
 
 def openCal(name):
+    """open the file containg the events from CSV
+
+    Args:
+        name (string): name/location of CSV
+
+    Returns:
+        2d list: all of the CSV
+    """
     calFile = open(name, "r").read().split("\n")
     for i in range(len(calFile)):
         if calFile[i] == "":
@@ -27,6 +32,11 @@ def openCal(name):
 
 
 def saveCal(name):
+    """saves the global calendar variable to the CSV
+
+    Args:
+        name (string): file name/location
+    """
     global calFile
     output = ""
     for event in calFile:
@@ -39,10 +49,16 @@ def saveCal(name):
 calName = "cal.csv"
 calFile = openCal(calName)
 
-# find all events on a day
-
 
 def findDay(day):
+    """search for all of the events from a day
+
+    Args:
+        day (string): date as string
+
+    Returns:
+        2d list: all of the events for a day 
+    """
     global calFile
     output = []
     for i in range(len(calFile)):
@@ -50,10 +66,16 @@ def findDay(day):
             output.append(calFile[i])
     return output
 
-# sort series of events by time
-
 
 def daySort(a):
+    """sort the events for a single day by time
+
+    Args:
+        a (list): input list to be sorted
+
+    Returns:
+        list: sorted list
+    """
     for i in range(len(a)):
         replaceable = (re.split(":| ", a[i][1]))
         if replaceable[2] == "PM":
@@ -62,19 +84,19 @@ def daySort(a):
             PMint = 0
         z = int(replaceable[1])/60
         a[i].append(int(replaceable[0])+z+PMint)
-    # for i in range(len(a)):
-    #    elm = a[i]
-    #    j = i-1
-    #    while j > 0 and a[j][4] < elm[4]:
-    #        a[j+1] = a[j]
-    #        j = j-1
-    #    a[j+1] = elm
-    #a = a[::-1]
     a = sorted(a, key=lambda x: x[4])
     return a
 
 
 def dayDraw(screen, day, maxWidth, location):
+    """draw the events for a single day
+
+    Args:
+        screen (screen object): object to refrence screen
+        day (string): date string
+        maxWidth (int): the maximum width of each event
+        location (int): y axis location of the column of events
+    """
     screen.print_at(day, 17, 0)
     events = daySort(findDay(day))
     for i in range(24):
@@ -93,6 +115,11 @@ def dayDraw(screen, day, maxWidth, location):
 
 
 def dateDraw(screen):
+    """show the time down the left hand side
+
+    Args:
+        screen (screen object): object to refrence screen
+    """
     screen.print_at('████████████████', 0, 0, 7)
     for i in range(24):
         if i < 12:
@@ -118,6 +145,12 @@ def dateDraw(screen):
 
 
 def weekDraw(screen, days):
+    """draw the dates for the week that is being displayed
+
+    Args:
+        screen (screen object): object to refrence screen
+        days (list): the dates of teh days to be displayed
+    """
     maxWidth = screen.width-16
     maxWidth = maxWidth//7
     for i in range(1, 8):
@@ -132,6 +165,11 @@ def weekDraw(screen, days):
 
 
 def dayViewExe(screen):
+    """execute the dayview function
+
+    Args:
+        screen (screen object): object to refrence screen
+    """
     global viewMode
     global dayDelta
     global todayDate
@@ -144,7 +182,11 @@ def dayViewExe(screen):
 
 
 def weekViewExe(screen):
-    #monday = now - timedelta(days = now.weekday())
+    """execute the week view, call to show the view
+
+    Args:
+        screen (screen object): object to refrence screen
+    """
     global viewMode
     global dayDelta
     global todayDate
@@ -161,6 +203,16 @@ def weekViewExe(screen):
 
 
 def crapInput(screen, width, height):
+    """a rubish not very user friendly basic input solution which can have the location of the input display spesified
+
+    Args:
+        screen (screen object): object to refrence screen
+        width (int): y axis location of the variable data shown on screen
+        height (int): x axis location of the variable data shown on screen
+
+    Returns:
+        string: string with all the charecters inputed
+    """
     charecters = ""
     while True:
         ev = screen.get_key()
@@ -179,6 +231,11 @@ def crapInput(screen, width, height):
 
 
 def viewEvent(screen):
+    """view or edit a event, asks which event and then displays it with options to edit it
+
+    Args:
+        screen (screen object): object to refrence screen
+    """
     global viewMode
     global dayDelta
     global todayDate
@@ -297,6 +354,11 @@ def viewEvent(screen):
 
 
 def addEvent(screen):
+    """create a new event, based on template
+
+    Args:
+        screen (screen object): object to refrence screen
+    """
     global viewMode
     global dayDelta
     global todayDate
@@ -353,6 +415,11 @@ def addEvent(screen):
 
 
 def delEvent(screen):
+    """delete a events, ask which event and then pop it from global array
+
+    Args:
+        screen (screen object): object to refrence screen
+    """
     global viewMode
     global dayDelta
     global todayDate
@@ -423,6 +490,12 @@ def delEvent(screen):
 
 
 def refreshMain(screen):
+    """display all events on the screen
+
+    Args:
+        screen (screen object): object to refrence screen
+    """
+    global viewMode
     if viewMode == 0:
         dayViewExe(screen)
     elif viewMode == 1:
@@ -430,6 +503,11 @@ def refreshMain(screen):
 
 
 def menu(screen):
+    """prints the menu on the main screen and intiates all exeuctions
+
+    Args:
+        screen (screen object): object to refrence screen
+    """
     global viewMode
     global dayDelta
     global todayDate
@@ -472,22 +550,22 @@ def menu(screen):
                 dayDelta += 7
                 weekViewExe(screen)
             break
-        elif ev == ord("g"):#19/05/2021
+        elif ev == ord("g"):
             screen.print_at("Enter date:", 0, screen.height-2, 1)
             screen.refresh()
-            tempString=crapInput(screen, 12, screen.height-2)
-            tempDate=datetime.datetime.strptime(tempString,"%d/%m/%Y")
-            tempDate=tempDate.date()
-            if todayDate==tempDate:
-                dayDelta=0
-            elif todayDate>tempDate:
-                dayDelta=0-abs((tempDate-todayDate).days)
-            elif todayDate<tempDate:
-                dayDelta=0+abs((tempDate-todayDate).days)
+            tempString = crapInput(screen, 12, screen.height-2)
+            tempDate = datetime.datetime.strptime(tempString, "%d/%m/%Y")
+            tempDate = tempDate.date()
+            if todayDate == tempDate:
+                dayDelta = 0
+            elif todayDate > tempDate:
+                dayDelta = 0-abs((tempDate-todayDate).days)
+            elif todayDate < tempDate:
+                dayDelta = 0+abs((tempDate-todayDate).days)
 
-            if viewMode==0:
+            if viewMode == 0:
                 dayViewExe(screen)
-            elif viewMode==1:
+            elif viewMode == 1:
                 weekViewExe(screen)
             break
         elif ev == ord("q"):
@@ -497,66 +575,15 @@ def menu(screen):
 
 
 def main(screen):
+    """main execution point
+
+    Args:
+        screen (screen object): object to refrence screen
+    """
     dayViewExe(screen)
     while True:
         dateDraw(screen)
         menu(screen)
-    #    ev = screen.get_key()
-    #    screen.print_at("Change Mode(;)", 0, screen.height-1, 2)
-    #    # Day(0) | Week (1) | Add Event(a) | Delete Event(d) | View Event(v) | Previous(←) | Next (→) | Set Date(s)
-    #    if ev == ord(";"):
-    #        menu(screen)
-    #    else:
-    #        screen.refresh()
 
-
-# def main():
-#    global viewMode
-#    global todayDate
-#    global dayDelta
-#    while True:
-#        option = input(
-#            "Day(0) | Week (1) | Add Event(a) | Delete Event(d) | View Event(v) | Previous(←) | Next (→) | Set Date(s) ").lower()
-#        if option == "0":
-#            viewMode = 0
-#            tempDate = todayDate + datetime.timedelta(days=dayDelta)
-#            currentDate = tempDate.strftime("%d/%m/%Y")
-#            dayDraw(currentDate)
-#        elif option == "1":
-#            viewMode = 1
-#            tempDate = todayDate + datetime.timedelta(days=dayDelta)
-#            currentDate = tempDate.strftime("%d/%m/%Y")
-#            weekPrint(tempDate)
-#        elif option == "a":
-#            addEvent()
-#        elif option == "d":
-#            delEvent()
-#        elif option == "v":
-#            viewEvent()
-#        elif option == "s":
-#            dayDraw("1/1/1")
-#        elif option == "p":
-#            if viewMode == 0:
-#                dayDelta += 1
-#                tempDate = todayDate + datetime.timedelta(days=dayDelta)
-#                currentDate = tempDate.strftime("%d/%m/%Y")
-#                dayDraw(currentDate)
-#            elif viewMode == 1:
-#                dayDelta += 7
-#                tempDate = todayDate + datetime.timedelta(days=dayDelta)
-#                currentDate = tempDate.strftime("%d/%m/%Y")
-#                weekPrint(tempDate)
-#        elif option == "n":
-#            if viewMode == 0:
-#                dayDelta -= 1
-#                tempDate = todayDate + datetime.timedelta(days=dayDelta)
-#                currentDate = tempDate.strftime("%d/%m/%Y")
-#                dayDraw(currentDate)
-#            elif viewMode == 1:
-#                dayDelta -= 7
-#                tempDate = todayDate + datetime.timedelta(days=dayDelta)
-#                currentDate = tempDate.strftime("%d/%m/%Y")
-#                weekPrint(tempDate)
-#        else:
-#            print("No Such Option")
+#call main and pass through object
 Screen.wrapper(main)
