@@ -18,9 +18,9 @@ calFile = ['date', 'time', 'name', 'description']
 def openCal(name):
     calFile = open(name, "r").read().split("\n")
     for i in range(len(calFile)):
-        if calFile[i]=="":
+        if calFile[i] == "":
             calFile.pop(i)
-            i-=1
+            i -= 1
         else:
             calFile[i] = calFile[i].split(",")
     return calFile
@@ -160,7 +160,7 @@ def weekViewExe(screen):
     weekDraw(screen, currentDate)
 
 
-def crapInput(screen, height):
+def crapInput(screen, width, height):
     charecters = ""
     while True:
         ev = screen.get_key()
@@ -169,11 +169,11 @@ def crapInput(screen, height):
             return charecters
         elif ev == -300:
             charecters = charecters[:-1]
-            screen.print_at(charecters+" ", 0, height, 6)
+            screen.print_at(charecters+" ", width, height, 6)
             screen.refresh()
         elif ev != None and ev not in [-203, -205, -204, -206, -300, -207, -208, -102, -1]:
             charecters = charecters+chr(ev)
-            screen.print_at(charecters, 0, height, 6)
+            screen.print_at(charecters, width, height, 6)
 
             screen.refresh()
 
@@ -248,7 +248,7 @@ def viewEvent(screen):
     for i in range(4):
         screen.print_at(display[i], 0, i, 5)
         screen.print_at(
-            "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
     screen.refresh()
     while True:
         ev = screen.get_key()
@@ -259,37 +259,40 @@ def viewEvent(screen):
                     break
             screen.clear()
             return
+        elif ev == ord(":"):
+            screen.clear()
+            return
         elif ev == ord("d"):
-            display[0] = crapInput(screen, 0)
+            display[0] = crapInput(screen, 0, 0)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
                 screen.print_at(
-                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+                    "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
         elif ev == ord("t"):
-            display[1] = crapInput(screen, 1)
+            display[1] = crapInput(screen, 0, 1)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
                 screen.print_at(
-                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+                    "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
         elif ev == ord("n"):
-            display[2] = crapInput(screen, 2)
+            display[2] = crapInput(screen, 0, 2)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
                 screen.print_at(
-                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+                    "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
         elif ev == ord("i"):
-            display[3] = crapInput(screen, 3)
+            display[3] = crapInput(screen, 0, 3)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
                 screen.print_at(
-                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+                    "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
 
 
@@ -304,7 +307,7 @@ def addEvent(screen):
     for i in range(4):
         screen.print_at(display[i], 0, i, 5)
         screen.print_at(
-            "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+            "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
     screen.refresh()
     while True:
         ev = screen.get_key()
@@ -312,40 +315,111 @@ def addEvent(screen):
             calFile.append(display)
             screen.clear()
             return
+        elif ev == ord(":"):
+            screen.clear()
+            return
         elif ev == ord("d"):
-            display[0] = crapInput(screen, 0)
+            display[0] = crapInput(screen, 0, 0)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
                 screen.print_at(
-                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+                    "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
         elif ev == ord("t"):
-            display[1] = crapInput(screen, 1)
+            display[1] = crapInput(screen, 0, 1)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
                 screen.print_at(
-                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+                    "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
         elif ev == ord("n"):
-            display[2] = crapInput(screen, 2)
+            display[2] = crapInput(screen, 0, 2)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
                 screen.print_at(
-                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+                    "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
         elif ev == ord("i"):
-            display[3] = crapInput(screen, 3)
+            display[3] = crapInput(screen, 0, 3)
             screen.clear()
             for i in range(4):
                 screen.print_at(display[i], 0, i, 5)
                 screen.print_at(
-                    "Back To Main (;) | Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
+                    "Back and Save (;) | Back and Cancel (:)| Edit Date(d) | Edit Time(t) | Edit Name(n) | Edit Info(i) | Save Edit (tab)", 0, screen.height-1, 2)
             screen.refresh()
 
-#def delEvent(screen):
+
+def delEvent(screen):
+    global viewMode
+    global dayDelta
+    global todayDate
+    global calFile
+    screen.clear()
+    if viewMode == 1:
+        tempDate = todayDate + datetime.timedelta(days=dayDelta)
+        tempDate = tempDate-datetime.timedelta(days=tempDate.weekday())
+        currentDate = []
+        screen.clear()
+        for i in range(7):
+            currentDate.append(tempDate.strftime("%d/%m/%Y"))
+            screen.print_at(str(i)+": "+tempDate.strftime("%d/%m/%Y"), 0, i, 7)
+            tempDate = tempDate+datetime.timedelta(1)
+        screen.refresh()
+        inp = 0
+        while True:
+            ev = screen.get_key()
+            if ev == ord("0"):
+                inp = 0
+                break
+            elif ev == ord("1"):
+                inp = 1
+                break
+            elif ev == ord("2"):
+                inp = 2
+                break
+            elif ev == ord("3"):
+                inp = 3
+                break
+            elif ev == ord("4"):
+                inp = 4
+                break
+            elif ev == ord("5"):
+                inp = 5
+                break
+            elif ev == ord("6"):
+                inp = 6
+                break
+        daytoOut = currentDate[inp]
+    else:
+        tempDate = todayDate + datetime.timedelta(days=dayDelta)
+        daytoOut = tempDate.strftime("%d/%m/%Y")
+    events = daySort(findDay(daytoOut))
+    charecters = string.ascii_letters+string.digits
+    charecters = [char for char in charecters]
+    screen.clear()
+    for i in range(min(len(events), len(charecters))):
+        screen.print_at(charecters[i]+": "+events[i]
+                        [2]+" @ "+events[i][1], 0, i, 5)
+    screen.print_at("Type letter to delete | Back to Main(;)",
+                    0, screen.height-1, 2)
+    screen.refresh()
+    flag = True
+    while flag:
+        ev = screen.get_key()
+        if ev == ord(";"):
+            main(screen)
+        for i in range(min(len(events), len(charecters))):
+            if ev == ord(charecters[i]):
+                for j in range(len(calFile)):
+                    if calFile[j] == events[i]:
+                        calFile.pop(j)
+                        flag = False
+                        break
+            if flag == False:
+                break
 
 
 def refreshMain(screen):
@@ -362,7 +436,7 @@ def menu(screen):
     global calName
     while True:
         screen.print_at(
-            "Day(0) | Week (1) | Add Event(a) | Delete Event(d) | View/Edit Event(v) | Previous(p) | Next (n) | Go To Date(g) | Quit(q)", 0, screen.height-1, 2)
+            "Day(0) | Week (1) | Add(a) | Delete(d) | View/Edit(v) | Previous(p) | Next (n) | Go To Date(g) | Quit(q)", 0, screen.height-1, 2)
         ev = screen.get_key()
         if ev == ord("0"):
             dayViewExe(screen)
@@ -375,8 +449,8 @@ def menu(screen):
             refreshMain(screen)
             break
         elif ev == ord("d"):
-            screen.clear()
-            screen.print_at("Delete Event", 20, screen.height-5, 1)
+            delEvent(screen)
+            refreshMain(screen)
             break
         elif ev == ord("v"):
             viewEvent(screen)
@@ -398,9 +472,23 @@ def menu(screen):
                 dayDelta += 7
                 weekViewExe(screen)
             break
-        elif ev == ord("g"):
-            screen.clear()
-            screen.print_at("Go To Date", 20, screen.height-5, 1)
+        elif ev == ord("g"):#19/05/2021
+            screen.print_at("Enter date:", 0, screen.height-2, 1)
+            screen.refresh()
+            tempString=crapInput(screen, 12, screen.height-2)
+            tempDate=datetime.datetime.strptime(tempString,"%d/%m/%Y")
+            tempDate=tempDate.date()
+            if todayDate==tempDate:
+                dayDelta=0
+            elif todayDate>tempDate:
+                dayDelta=0-abs((tempDate-todayDate).days)
+            elif todayDate<tempDate:
+                dayDelta=0+abs((tempDate-todayDate).days)
+
+            if viewMode==0:
+                dayViewExe(screen)
+            elif viewMode==1:
+                weekViewExe(screen)
             break
         elif ev == ord("q"):
             saveCal(calName)
