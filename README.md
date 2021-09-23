@@ -7,7 +7,7 @@ Super simple terminal based python calendar.
 # Instalation
 1. Download the `pyCal.py` file and save to a convient location.
 2. Create a blank textfile called `cal.csv` inteh same location as this file.
-3. Open a admin terminal and run `pip install asciimatics`.
+3. Open an admin terminal and run `pip install asciimatics`.
 
 # Usage
 
